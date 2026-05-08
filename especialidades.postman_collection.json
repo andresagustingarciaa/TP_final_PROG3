@@ -1,0 +1,107 @@
+{
+  "info": {
+    "name": "API Clínica - Especialidades",
+    "description": "Pruebas de todos los endpoints de especialidades",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "GET - Todas las especialidades",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/v1/especialidades",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "v1", "especialidades"]
+        },
+        "description": "Trae TODAS las especialidades que existen (solo las activas)"
+      },
+      "response": []
+    },
+    {
+      "name": "GET - Una especialidad por ID",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/v1/especialidades/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "v1", "especialidades", "1"]
+        },
+        "description": "Trae UNA especialidad específica. Cambia el número al final según el ID que quieras probar.\n\nRespuesta exitosa: 200\nNo encontrada: 404\nID inválido: 400"
+      },
+      "response": []
+    },
+    {
+      "name": "POST - Crear nueva especialidad",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Cardiología\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/v1/especialidades",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "v1", "especialidades"]
+        },
+        "description": "CREA una nueva especialidad. Cambia el nombre por lo que quieras crear.\n\nPuedes probar con:\n- \"Dermatología\"\n- \"Pediatría\"\n- \"Ortopedia\"\n- Lo que se te ocurra\n\nRespuesta exitosa: 201\nDatos inválidos: 400 (si no pones nombre o es muy largo)"
+      },
+      "response": []
+    },
+    {
+      "name": "PUT - Editar una especialidad",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nombre\": \"Cardiología Avanzada\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:3000/api/v1/especialidades/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "v1", "especialidades", "1"]
+        },
+        "description": "MODIFICA el nombre de una especialidad existente. Cambia:\n- El ID (número al final de la URL) por el que quieras editar\n- El \"nombre\" por el nuevo nombre\n\nRespuesta exitosa: 200\nNo encontrada: 404\nDatos inválidos: 400"
+      },
+      "response": []
+    },
+    {
+      "name": "DELETE - Eliminar una especialidad",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "http://localhost:3000/api/v1/especialidades/1",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "3000",
+          "path": ["api", "v1", "especialidades", "1"]
+        },
+        "description": "ELIMINA una especialidad (soft delete = no se borra completamente, solo se marca como inactiva).\n\nCambia el número al final por el ID que quieras borrar.\n\nRespuesta exitosa: 200\nNo encontrada: 404\nID inválido: 400"
+      },
+      "response": []
+    }
+  ]
+}

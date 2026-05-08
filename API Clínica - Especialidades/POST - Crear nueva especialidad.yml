@@ -1,0 +1,36 @@
+info:
+  name: POST - Crear nueva especialidad
+  type: http
+  seq: 3
+
+http:
+  method: POST
+  url: http://localhost:3000/api/v1/especialidades
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Cardiología"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  CREA una nueva especialidad. Cambia el nombre por lo que quieras crear.
+
+  Puedes probar con:
+  - "Dermatología"
+  - "Pediatría"
+  - "Ortopedia"
+  - Lo que se te ocurra
+
+  Respuesta exitosa: 201
+  Datos inválidos: 400 (si no pones nombre o es muy largo)

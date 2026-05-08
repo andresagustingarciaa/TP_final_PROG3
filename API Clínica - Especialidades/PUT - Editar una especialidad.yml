@@ -1,0 +1,33 @@
+info:
+  name: PUT - Editar una especialidad
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: http://localhost:3000/api/v1/especialidades/1
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "nombre": "Cardiología Avanzada"
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  MODIFICA el nombre de una especialidad existente. Cambia:
+  - El ID (número al final de la URL) por el que quieras editar
+  - El "nombre" por el nuevo nombre
+
+  Respuesta exitosa: 200
+  No encontrada: 404
+  Datos inválidos: 400
