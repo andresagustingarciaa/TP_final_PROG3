@@ -25,6 +25,8 @@ const read = async (req, res) => {
 const add = async (req, res) => {
     try {
         const { nombre } = req.body;
+        const existing = await especialidadesModel.getByName(nombre);
+        if (existing) return res.status(409).json({ ok: false, message: 'Ya existe una especialidad con ese nombre' });
         const result = await especialidadesModel.create({ nombre });
         res.status(201).json({ ok: true, data: { id_especialidad: result.insertId, nombre } });
     } catch (error) {
@@ -36,6 +38,10 @@ const add = async (req, res) => {
 const edit = async (req, res) => {
     try {
         const { nombre } = req.body;
+        const existing = await especialidadesModel.getByName(nombre);
+        if (existing && existing.id_especialidad !== Number(req.params.id)) {
+            return res.status(409).json({ ok: false, message: 'Ya existe una especialidad con ese nombre' });
+        }
         const result = await especialidadesModel.update(req.params.id, { nombre });
         if (result.affectedRows === 0) return res.status(404).json({ ok: false, message: 'Especialidad no encontrada' });
         res.status(200).json({ ok: true, message: 'Especialidad actualizada' });

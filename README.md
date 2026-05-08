@@ -65,9 +65,10 @@ Básicamente son todas estas:
 
 Ahora el código está validando las cosas:
 - **El nombre**: Tiene que estar, ser texto, y no puede tener mas de 120 caracteres
+- **El nombre** no puede repetirse: no se permiten especialidades con el mismo nombre
 - **El ID**: Tiene que ser un número positivo (no puede ser 0 o negativo)
 
-Si mandas algo incorrecto, te va a devolver un error 400 con los detalles de qué está mal.
+Si mandas algo incorrecto, te va a devolver un error 400 con los detalles de qué está mal. Si intentas crear o cambiar una especialidad con un nombre que ya existe, te va a devolver 409.
 
 ### Códigos de respuesta HTTP
 

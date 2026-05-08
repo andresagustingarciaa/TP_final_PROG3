@@ -15,6 +15,11 @@ const create = async (data) => {
     return result;
 };
 
+const getByName = async (nombre) => {
+    const [rows] = await pool.query('SELECT * FROM especialidades WHERE nombre = ? AND activo = 1', [nombre]);
+    return rows[0];
+};
+
 const update = async (id, data) => {
     const [result] = await pool.query('UPDATE especialidades SET nombre = ? WHERE id_especialidad = ? AND activo = 1', [data.nombre, id]);
     return result;
