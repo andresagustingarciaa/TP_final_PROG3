@@ -1,6 +1,6 @@
-//Arreglo de referencia para especialidades 
 const especialidadesModel = require('../models/especialidades.model');
 
+// Devuelve todas las especialidades activas
 const browse = async (req, res) => {
     try {
         const especialidades = await especialidadesModel.getAll();
@@ -9,7 +9,8 @@ const browse = async (req, res) => {
         res.status(500).json({ ok: false, message: error.message });
     }
 };
-//Lectura de una especialidad por su id, solo si esta activa
+
+// Devuelve una especialidad por su id, solo si está activa
 const read = async (req, res) => {
     try {
         const especialidad = await especialidadesModel.getById(req.params.id);
@@ -19,7 +20,8 @@ const read = async (req, res) => {
         res.status(500).json({ ok: false, message: error.message });
     }
 };
-//Agrega una nueva especialidad, por defecto se activa al crearla
+
+// Agrega una nueva especialidad, por defecto se activa al crearla
 const add = async (req, res) => {
     try {
         const { nombre } = req.body;
@@ -29,7 +31,8 @@ const add = async (req, res) => {
         res.status(500).json({ ok: false, message: error.message });
     }
 };
-//Actualiza el nombre de una especialidad, solo si esta activa
+
+// Actualiza el nombre de una especialidad, solo si está activa
 const edit = async (req, res) => {
     try {
         const { nombre } = req.body;
@@ -40,7 +43,8 @@ const edit = async (req, res) => {
         res.status(500).json({ ok: false, message: error.message });
     }
 };
-//Elimina una especialidad, solo si esta activa
+
+// Elimina (soft delete) una especialidad, solo si está activa
 const remove = async (req, res) => {
     try {
         const result = await especialidadesModel.remove(req.params.id);
