@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
- "scripts": {
+  "scripts": {
     "start": "node src/app.js",
     "dev": "nodemon src/app.js"
-},
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/andresagustingarciaa/TP_final_PROG3.git"
@@ -23,6 +23,7 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
+    "express-validator": "^7.3.2",
     "morgan": "^1.10.1",
     "mysql2": "^3.22.3"
   },
