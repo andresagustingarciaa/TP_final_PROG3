@@ -12,16 +12,6 @@ const browse = async (req, res) => {
 //Lectura de una especialidad por su id, solo si esta activa
 const read = async (req, res) => {
     try {
-        const [rows] = await pool.query('SELECT * FROM especialidades WHERE id_especialidad = ? AND activo = 1', [req.params.id]);
-        if (rows.length === 0) return res.status(404).json({ ok: false, message: 'Especialidad no encontrada' });
-        res.json({ ok: true, data: rows[0] });
-    } catch (error) {
-        res.status(500).json({ ok: false, message: error.message });
-    }
-};
-//Agrega una nueva especialidad, por defecto se activa al crearla
-const read = async (req, res) => {
-    try {
         const especialidad = await especialidadesModel.getById(req.params.id);
         if (!especialidad) return res.status(404).json({ ok: false, message: 'Especialidad no encontrada' });
         res.status(200).json({ ok: true, data: especialidad });
