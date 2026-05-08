@@ -11,7 +11,7 @@ Básicamente es un servidor que te deja:
 - Modificar una especialidad que ya existe
 - Borrar una especialidad (aunque mejor no lo hagas sin querer)
 
-Está hecho con **Express** (que es un framework de Node.js), **MySQL** para la base de datos, y un montón de librerías que no entiendo muy bien pero funcionan.
+Está hecho con **Express** (que es un framework de Node.js), **MySQL** para la base de datos, y librerias
 
 ## Cómo instalar esto
 
