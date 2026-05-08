@@ -4,7 +4,7 @@ Clinica- Programación 3 2026
 Como correr el proyecto
 
 1. Clonar el repo
-2. Instalar dependencias con "npm install"
+2. Instalar dependencias con "npm install" y "npm install express-validator"
 3. Crear un archivo ".env" en la raíz con esto:
 
 PORT=3000
