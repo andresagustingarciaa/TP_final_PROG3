@@ -21,4 +21,4 @@ GET /api/v1/especialidades - lista todas
 GET /api/v1/especialidades/:id - trae una
 POST /api/v1/especialidades - crea una
 PUT /api/v1/especialidades/:id - edita una
-DELETE /api/v1/especialidades/:id - elimina (soft delete)
+DELETE /api/v1/especialidades/:id - elimina 
