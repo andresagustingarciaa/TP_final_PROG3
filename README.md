@@ -13,7 +13,7 @@ DB_USER=root
 DB_PASSWORD=
 DB_NAME=clinica_db
 
-4. Correr con npm run dev   (tengan 2 terminales abiertas aca en vs code asi con una ven que corra bien y la otra para ir poniendo los comandos)
+4. Correr con "npm run dev"   (tengan 2 terminales abiertas aca en vs code asi con una ven que corra bien y la otra para ir poniendo los comandos)
 
 //Endpoints de especialidades
 
