@@ -33,6 +33,7 @@ const remove = async (id) => {
 module.exports = {
     getAll,
     getById,
+    getByName,
     create,
     update,
     remove
