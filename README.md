@@ -9,9 +9,11 @@ Básicamente es un servidor que te deja:
 - Ver una especialidad específica por su ID
 - Crear nuevas especialidades (tipo Cardiología, Dermatología, etc)
 - Modificar una especialidad que ya existe
-- Borrar una especialidad (aunque mejor no lo hagas sin querer)
+- Borrar una especialidad (Soft Delete)
 
 Está hecho con **Express** (que es un framework de Node.js), **MySQL** para la base de datos, y librerias
+
+
 
 ## Cómo instalar esto
 
@@ -31,7 +33,7 @@ Primero necesitas tener **Node.js** instalado (si no lo tenes, te lo bajas de no
    ```
    (Si no funciona a la primera, intenta d nuevo, a veces pasa q falla)
 
-3. **Crea el archivo `.env`** en la carpeta principal (la raíz) con esto:
+3. **Crea el archivo `.env` e instalr DB** en la carpeta principal (la raíz) con esto:
    ```
    PORT=3000
    DB_HOST=localhost
@@ -40,6 +42,12 @@ Primero necesitas tener **Node.js** instalado (si no lo tenes, te lo bajas de no
    DB_NAME=clinica_db
    ```
    > Nota: Cambia la contraseña si tu MySQL tiene contraseña (la mia no tiene por eso esta vacio)
+
+   # Base de datos
+
+   La base de datos fue creada con el script SQL provisto por el docente.
+   Para ejecutarla se utilizó APPserv.
+   Asegurarse de tener MySQL corriendo y configurar el .env con los datos de conexión correspondientes.
 
 4. **Corre el servidor**
    ```bash
