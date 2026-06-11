@@ -1,9 +1,9 @@
-const especialidadesModel = require('../models/especialidades.model');
+const especialidadesService = require('../services/especialidades.service');
 
 // Devuelve todas las especialidades activas
 const browse = async (req, res) => {
     try {
-        const especialidades = await especialidadesModel.getAll();
+        const especialidades = await especialidadesService.getAll();
         res.status(200).json({ ok: true, data: especialidades });
     } catch (error) {
         res.status(500).json({ ok: false, message: error.message });
@@ -13,7 +13,7 @@ const browse = async (req, res) => {
 // Devuelve una especialidad por su id, solo si está activa
 const read = async (req, res) => {
     try {
-        const especialidad = await especialidadesModel.getById(req.params.id);
+        const especialidad = await especialidadesService.getById(req.params.id);
         if (!especialidad) return res.status(404).json({ ok: false, message: 'Especialidad no encontrada' });
         res.status(200).json({ ok: true, data: especialidad });
     } catch (error) {
@@ -25,9 +25,9 @@ const read = async (req, res) => {
 const add = async (req, res) => {
     try {
         const { nombre } = req.body;
-        const existing = await especialidadesModel.getByName(nombre);
+        const existing = await especialidadesService.getByName(nombre);
         if (existing) return res.status(409).json({ ok: false, message: 'Ya existe una especialidad con ese nombre' });
-        const result = await especialidadesModel.create({ nombre });
+        const result = await especialidadesService.create({ nombre });
         res.status(201).json({ ok: true, data: { id_especialidad: result.insertId, nombre } });
     } catch (error) {
         res.status(500).json({ ok: false, message: error.message });
@@ -38,11 +38,11 @@ const add = async (req, res) => {
 const edit = async (req, res) => {
     try {
         const { nombre } = req.body;
-        const existing = await especialidadesModel.getByName(nombre);
+        const existing = await especialidadesService.getByName(nombre);
         if (existing && existing.id_especialidad !== Number(req.params.id)) {
             return res.status(409).json({ ok: false, message: 'Ya existe una especialidad con ese nombre' });
         }
-        const result = await especialidadesModel.update(req.params.id, { nombre });
+        const result = await especialidadesService.update(req.params.id, { nombre });
         if (result.affectedRows === 0) return res.status(404).json({ ok: false, message: 'Especialidad no encontrada' });
         res.status(200).json({ ok: true, message: 'Especialidad actualizada' });
     } catch (error) {
@@ -53,7 +53,7 @@ const edit = async (req, res) => {
 // Elimina (soft delete) una especialidad, solo si está activa
 const remove = async (req, res) => {
     try {
-        const result = await especialidadesModel.remove(req.params.id);
+        const result = await especialidadesService.remove(req.params.id);
         if (result.affectedRows === 0) return res.status(404).json({ ok: false, message: 'Especialidad no encontrada' });
         res.status(200).json({ ok: true, message: 'Especialidad eliminada' });
     } catch (error) {
