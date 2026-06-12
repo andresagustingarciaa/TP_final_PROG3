@@ -3,6 +3,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 require('dotenv').config();
 const especialidadesRouter = require('./routes/especialidades.routes');
+const authRouter = require('./routes/auth.routes');
 const app = express();
 
 // Middlewares
@@ -10,6 +11,7 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 app.use('/api/v1/especialidades', especialidadesRouter);
+app.use('/api/v1/auth', authRouter);
 
 // Ruta de prueba
 app.get('/', (req, res) => {
