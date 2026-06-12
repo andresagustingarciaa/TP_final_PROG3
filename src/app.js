@@ -3,6 +3,8 @@ const morgan = require('morgan');
 const cors = require('cors');
 require('dotenv').config();
 const especialidadesRouter = require('./routes/especialidades.routes');
+const obrasSocialesRouter = require('./routes/obras_sociales.routes');
+const medicosRouter = require('./routes/medicos.routes');
 const authRouter = require('./routes/auth.routes');
 const app = express();
 
@@ -11,6 +13,8 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 app.use('/api/v1/especialidades', especialidadesRouter);
+app.use('/api/v1/obras-sociales', obrasSocialesRouter);
+app.use('/api/v1/medicos', medicosRouter);
 app.use('/api/v1/auth', authRouter);
 
 // Ruta de prueba
