@@ -1,0 +1,34 @@
+info:
+  name: PUT - Asociar especialidad
+  type: http
+  seq: 6
+
+http:
+  method: PUT
+  url: http://localhost:3000/api/v1/medicos/1/especialidad
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "id_especialidad": 2
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  ASOCIA una especialidad a un médico (cambia la especialidad que tiene).
+
+  Cambia el ID del médico en la URL y el id_especialidad en el body.
+
+  Respuesta exitosa: 200
+  Médico no encontrado: 404
+  Especialidad no encontrada: 404
+  Datos inválidos: 400

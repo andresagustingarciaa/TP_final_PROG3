@@ -1,0 +1,24 @@
+info:
+  name: DELETE - Eliminar una obra social
+  type: http
+  seq: 5
+
+http:
+  method: DELETE
+  url: http://localhost:3000/api/v1/obras-sociales/1
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  ELIMINA una obra social (soft delete = no se borra completamente, solo se marca como inactiva).
+
+  Cambia el número al final por el ID que quieras borrar.
+
+  Respuesta exitosa: 200
+  No encontrada: 404
+  ID inválido: 400

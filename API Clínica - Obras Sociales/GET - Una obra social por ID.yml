@@ -1,0 +1,22 @@
+info:
+  name: GET - Una obra social por ID
+  type: http
+  seq: 2
+
+http:
+  method: GET
+  url: http://localhost:3000/api/v1/obras-sociales/1
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  Trae UNA obra social específica. Cambia el número al final según el ID que quieras probar.
+
+  Respuesta exitosa: 200
+  No encontrada: 404
+  ID inválido: 400
