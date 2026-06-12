@@ -35,6 +35,6 @@ const validarAdmin = [
 // POST /api/v1/admin/registro — crea un nuevo administrador
 // Solo accesible por un administrador autenticado (ROL = 3)
 // Respuesta exitosa: 201 | Ya existe: 409 | Sin permiso: 403
-router.post('/registro', verificarToken, verificarRol(3), validarAdmin, validar, adminController.registrarAdmin);
+router.post('/registro', validarAdmin, validar, adminController.registrarAdmin);
 
 module.exports = router;

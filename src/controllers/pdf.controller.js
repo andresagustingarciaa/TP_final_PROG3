@@ -1,18 +1,18 @@
 const PDFDocument = require('pdfkit');
 const pool = require('../db.js');
 
-// Genera un PDF con el informe de los turnos
+// Genera un PDF con el informe de turnos.
 // Incluye: total de turnos, turnos atendidos, desglose por obra social,
-// y  lista detallada de turnos con paciente, médico, fecha y valor
-// Solo accesible para administradores (ROL = 3)
+// y lista detallada de turnos con paciente, médico, fecha y valor.
+// Solo accesible para administradores (ROL = 3).
 const generarInformeTurnos = async (req, res) => {
     try {
         // Resumen general: total y atendidos
         const [resumen] = await pool.query(`
             SELECT
                 COUNT(*) AS total_turnos,
-                SUM(atendido = 1) AS turnos_atendidos,
-                SUM(atendido = 0) AS turnos_pendientes,
+                SUM(atentido = 1) AS turnos_atendidos,
+                SUM(atentido = 0) AS turnos_pendientes,
                 SUM(valor_total) AS monto_total
             FROM turnos_reservas
             WHERE activo = 1
@@ -40,7 +40,7 @@ const generarInformeTurnos = async (req, res) => {
                 os.nombre AS obra_social,
                 tr.fecha_hora,
                 tr.valor_total,
-                tr.atendido
+                tr.atentido
             FROM turnos_reservas tr
             JOIN pacientes p ON tr.id_paciente = p.id_paciente
             JOIN usuarios up ON p.id_usuario = up.id_usuario
@@ -60,13 +60,13 @@ const generarInformeTurnos = async (req, res) => {
         res.setHeader('Content-Disposition', 'attachment; filename="informe-turnos.pdf"');
         doc.pipe(res);
 
-        // Encabezado 
+        // ── Encabezado ──────────────────────────────────────────
         doc.fontSize(20).font('Helvetica-Bold').text('Clínica Médica', { align: 'center' });
         doc.fontSize(14).font('Helvetica').text('Informe de Turnos', { align: 'center' });
         doc.fontSize(10).text(`Generado: ${new Date().toLocaleString('es-AR')}`, { align: 'center' });
         doc.moveDown(1.5);
 
-        // Resumen general
+        // ── Resumen general ──────────────────────────────────────
         doc.fontSize(13).font('Helvetica-Bold').text('Resumen General');
         doc.moveDown(0.4);
         doc.fontSize(11).font('Helvetica');
@@ -78,7 +78,7 @@ const generarInformeTurnos = async (req, res) => {
         doc.text(`Monto total facturado: $${Number(r.monto_total || 0).toFixed(2)}`);
         doc.moveDown(1.5);
 
-        // Por obra sociall
+        // ── Por obra social ──────────────────────────────────────
         doc.fontSize(13).font('Helvetica-Bold').text('Turnos por Obra Social');
         doc.moveDown(0.4);
 
@@ -109,7 +109,7 @@ const generarInformeTurnos = async (req, res) => {
         }
         doc.moveDown(1.5);
 
-        // Detalle de turnos 
+        // ── Detalle de turnos ────────────────────────────────────
         doc.fontSize(13).font('Helvetica-Bold').text('Últimos 100 Turnos');
         doc.moveDown(0.4);
 
@@ -137,7 +137,7 @@ const generarInformeTurnos = async (req, res) => {
                 }
                 const y = doc.y;
                 const fecha = new Date(t.fecha_hora).toLocaleDateString('es-AR');
-                const estado = t.atendido ? 'Atendido' : 'Pendiente';
+                const estado = t.atentido ? 'Atendido' : 'Pendiente';
 
                 doc.text(t.paciente, xPac, y, { width: 130 });
                 doc.text(t.medico, xMed, y, { width: 130 });
@@ -151,7 +151,7 @@ const generarInformeTurnos = async (req, res) => {
         doc.end();
     } catch (error) {
         // Si ya se empezó a escribir el PDF no podemos cambiar el estatus,
-        // así que solo terminamos con un error logueado
+        // así que solo terminamos el stream con un error logueado
         console.error('[pdf] error generando informe:', error.message);
         if (!res.headersSent) {
             res.status(500).json({ ok: false, message: error.message });
