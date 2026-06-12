@@ -1,0 +1,14 @@
+opencollection: 1.0.0
+
+info:
+  name: API Clínica - Auth
+
+docs:
+  content: Pruebas del endpoint de login
+  type: text/markdown
+bundled: false
+extensions:
+  bruno:
+    ignore:
+      - node_modules
+      - .git
