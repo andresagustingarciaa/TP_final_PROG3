@@ -8,6 +8,8 @@ const medicosRouter = require('./routes/medicos.routes');
 const authRouter = require('./routes/auth.routes');
 const pacientesRouter = require('./routes/pacientes.routes');
 const turnosRouter = require('./routes/turnos.routes');
+const adminRouter = require('./routes/admin.routes');
+const pdfRouter = require('./routes/pdf.routes');
 const app = express();
 
 // Middlewares
@@ -20,6 +22,8 @@ app.use('/api/v1/medicos', medicosRouter);
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/pacientes', pacientesRouter);
 app.use('/api/v1/turnos', turnosRouter);
+app.use('/api/v1/admin', adminRouter);
+app.use('/api/v1/reportes', pdfRouter);
 
 // Ruta de prueba
 app.get('/', (req, res) => {
