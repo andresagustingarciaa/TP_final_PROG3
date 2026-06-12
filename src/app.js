@@ -6,6 +6,8 @@ const especialidadesRouter = require('./routes/especialidades.routes');
 const obrasSocialesRouter = require('./routes/obras_sociales.routes');
 const medicosRouter = require('./routes/medicos.routes');
 const authRouter = require('./routes/auth.routes');
+const pacientesRouter = require('./routes/pacientes.routes');
+const turnosRouter = require('./routes/turnos.routes');
 const app = express();
 
 // Middlewares
@@ -16,6 +18,8 @@ app.use('/api/v1/especialidades', especialidadesRouter);
 app.use('/api/v1/obras-sociales', obrasSocialesRouter);
 app.use('/api/v1/medicos', medicosRouter);
 app.use('/api/v1/auth', authRouter);
+app.use('/api/v1/pacientes', pacientesRouter);
+app.use('/api/v1/turnos', turnosRouter);
 
 // Ruta de prueba
 app.get('/', (req, res) => {
