@@ -3,27 +3,27 @@ const medicosModel = require('../models/medicos.model');
 const especialidadesModel = require('../models/especialidades.model');
 const obrasSocialesModel = require('../models/obras_sociales.model');
 
-const getAll = async () => {
+const getAll = async () => {                          // Obtiene todos los medicos activos
     return await medicosModel.getAll();
 };
 
-const getById = async (id) => {
+const getById = async (id) => {                       // Obtiene un médico por su ID
     return await medicosModel.getById(id);
 };
 
-const getByMatricula = async (matricula) => {
+const getByMatricula = async (matricula) => {         // Busca por matricula (para evitar duplicados)
     return await medicosModel.getByMatricula(matricula);
 };
 
-const getByEmail = async (email) => {
+const getByEmail = async (email) => {                 // Busca usuario por email
     return await medicosModel.getByEmail(email);
 };
 
-const getByDocumento = async (documento) => {
+const getByDocumento = async (documento) => {         // Busca usuario por documento
     return await medicosModel.getByDocumento(documento);
 };
 
-const create = async (data) => {
+const create = async (data) => {                      // Crea usuario + medico (encripta la contraseña con bcrypt)
     const contraseniaHash = await bcrypt.hash(data.contrasenia, 10);
     const usuarioData = {
         documento: data.documento,
@@ -41,7 +41,7 @@ const create = async (data) => {
     return await medicosModel.create(usuarioData, medicoData);
 };
 
-const update = async (id, data) => {
+const update = async (id, data) => {                  // Actuliza usuario y medico
     const usuarioData = {
         documento: data.documento,
         apellido: data.apellido,
@@ -58,11 +58,11 @@ const update = async (id, data) => {
     return await medicosModel.update(id, usuarioData, medicoData);
 };
 
-const remove = async (id) => {
+const remove = async (id) => {                        // Elimina un medico (soft delete del usuario)
     return await medicosModel.remove(id);
 };
 
-const asociarEspecialidad = async (id_medico, id_especialidad) => {
+const asociarEspecialidad = async (id_medico, id_especialidad) => {   // Cambia la especialidad del medico
     const medico = await medicosModel.getById(id_medico);
     if (!medico) return { medicoNoEncontrado: true };
 
@@ -72,11 +72,11 @@ const asociarEspecialidad = async (id_medico, id_especialidad) => {
     return await medicosModel.updateEspecialidad(id_medico, id_especialidad);
 };
 
-const getObrasSociales = async (id_medico) => {
+const getObrasSociales = async (id_medico) => {       // Lista obras sociales asosiadas al medico
     return await medicosModel.getObrasSociales(id_medico);
 };
 
-const asociarObraSocial = async (id_medico, id_obra_social) => {
+const asociarObraSocial = async (id_medico, id_obra_social) => {      // Asocia una obra social al medico
     const medico = await medicosModel.getById(id_medico);
     if (!medico) return { medicoNoEncontrado: true };
 
@@ -86,7 +86,7 @@ const asociarObraSocial = async (id_medico, id_obra_social) => {
     return await medicosModel.asociarObraSocial(id_medico, id_obra_social);
 };
 
-const desasociarObraSocial = async (id_medico, id_obra_social) => {
+const desasociarObraSocial = async (id_medico, id_obra_social) => {   // Desasocia obra social (soft delete)
     return await medicosModel.desasociarObraSocial(id_medico, id_obra_social);
 };
 

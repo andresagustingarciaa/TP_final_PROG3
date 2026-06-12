@@ -123,7 +123,7 @@ const updateEspecialidad = async (id, id_especialidad) => {
     return result;
 };
 
-// --- Obras sociales del médico ---
+// --- Obras sociales del medico ---
 
 const getObrasSociales = async (id_medico) => {
     const [rows] = await pool.query(`
