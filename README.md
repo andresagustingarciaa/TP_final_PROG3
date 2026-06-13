@@ -38,13 +38,25 @@ Primero necesitas tener **Node.js** instalado (si no lo tenes, te lo bajas de no
 
 3. **Crea el archivo `.env` e instalr DB** en la carpeta principal (la raíz) con esto:
    ```
-   PORT=3000
-   DB_HOST=localhost
-   DB_USER=root
-   DB_PASSWORD=
-   DB_NAME=clinica_db
+      PORT=3000
+
+      DB_HOST=localhost
+      DB_USER=root
+      DB_PASSWORD=
+      DB_NAME=prog3_turnos
+
+      JWT_SECRET=clinica_secret_key
+
    ```
    > Nota: Cambia la contraseña si tu MySQL tiene contraseña (la mia no tiene por eso esta vacio)
+
+   **Explicación de las variables de `.env`:**
+   - **PORT** - Puerto en el qe corre el servidor (3000 es el default)
+   - **DB_HOST** - Host/IP del servidor MySQL (localhost = tu máquina)
+   - **DB_USER** - Usuario de MySQL (normalmente "root")
+   - **DB_PASSWORD** - Contraseña de MySQL (vacío si no tenes contraseña)
+   - **DB_NAME** - Nombre de la base de datos (en este caso "prog3_turnos")
+   - **JWT_SECRET** - Clave secreta para firmar los tokens JWT. Cambiar a algo más seguro en producción
 
    # Base de datos
 
@@ -133,7 +145,107 @@ const login = async (email, contrasenia) => {
 }
 ```
 
-## Todos los Endpoints Disponibles 📍
+## Roles y Permisos 👥
+
+El sistema cuenta con 3 roles definidos. Cada rol tiene acceso diferente a los endpoints:
+
+| Rol | ID | Descripción | Permisos |
+|-----|----|-----------|---------| 
+| **Médico** | 1 | Personal médico qe atiende turnos | Ver especialidades, ver pacientes, atender turnos, consultar sus propios turnos, ver obras sociales |
+| **Paciente** | 2 | Usuarios qe solicitan turnos | Ver médicos, ver especialidades, ver obras sociales, reservar turnos, ver sus turnos |
+| **Administrador** | 3 | Gestiona todo el sistema | Acceso total: crear/editar/eliminar usuarios, turnos, especialidades, ver estadísticas, generar reportes PDF |
+
+### Qué puede hacer cada rol:
+
+**Médico (Rol 1):**
+- ✅ Listar y ver especialidades
+- ✅ Listar y ver pacientes
+- ✅ Marcar turnos como atendidos (`PATCH /turnos/:id/atender`)
+- ✅ Ver sus propios turnos
+- ❌ Crear/editar/eliminar especialidades
+- ❌ Crear/editar/eliminar pacientes
+- ❌ Acceso a estadísticas
+
+**Paciente (Rol 2):**
+- ✅ Ver médicos
+- ✅ Ver especialidades
+- ✅ Ver obras sociales
+- ✅ Crear y ver turnos propios
+- ❌ Crear/editar/eliminar otros usuarios
+- ❌ Acceso a estadísticas
+- ❌ Marcar turnos como atendidos
+
+**Administrador (Rol 3):**
+- ✅ **ACCESO TOTAL** a todos los endpoints
+- ✅ Crear/editar/eliminar especialidades
+- ✅ Crear/editar/eliminar médicos
+- ✅ Crear/editar/eliminar pacientes
+- ✅ Crear/editar/eliminar obras sociales
+- ✅ Ver estadísticas del sistema
+- ✅ Generar reportes en PDF
+- ✅ Crear otros administradores
+
+## Flujo de Autenticación paso a paso 🔄
+
+Este es el flujo qe debe seguir un usuario para acceder a endpoints protegidos:
+
+### Paso 1: Login
+El usuario envía sus credenciales al endpoint `/api/v1/auth/login`:
+
+```bash
+POST /api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "lopmar@correo.com",
+  "contrasenia": "miContraseña123"
+}
+```
+
+### Paso 2: Validación de Contraseña
+El servidor:
+1. Busca el usuario por email
+2. Intenta validar con **bcrypt** (si el usuario fue creado recientemente)
+3. Si falla, intenta con **SHA256** (usuarios antiguos del `db.sql`)
+4. Si ninguno funciona, devuelve error 401
+
+### Paso 3: Generación de Token JWT
+Si la contraseña es válida, se genera un token con:
+- `id_usuario` - ID del usuario
+- `email` - Email del usuario  
+- `rol` - Rol del usuario (1, 2 o 3)
+- `exp` - Fecha de expiración (8 horas desde ahora)
+
+**Respuesta del servidor:**
+```json
+{
+  "ok": true,
+  "data": {
+    "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sIjoxLCJpYXQiOjE2MjMwNDAwMDB9.FIRMA",
+    "rol": 1
+  }
+}
+```
+
+### Paso 4: Usar el Token
+El cliente debe guardar el token y usarlo en TODOS los requests posteriores a endpoints protegidos. Se envía en el header `Authorization`:
+
+```bash
+GET /api/v1/especialidades
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwicm9sIjoxLCJpYXQiOjE2MjMwNDAwMDB9.FIRMA
+```
+
+**Nota:** El token dura **8 horas**. Después debe hacer login de nuevo.
+
+### Paso 5: Validación del Token en cada Request
+El middleware `auth.middleware.js` verifica:
+1. ¿El header `Authorization` existe?
+2. ¿El token es válido y no está expirado?
+3. ¿El rol del usuario tiene permiso para este endpoint?
+
+Si algo falla, devuelve error 401 o 403.
+
+
 
 ### � Leyenda de Símbolos
 - **❌** = No requiere autenticación (endpoint público)
@@ -417,6 +529,106 @@ npm run dev
 **Para correr en producción (sin nodemon):**
 ```bash
 npm start
+```
+
+## Validaciones y Reglas de Negocio 🔒
+
+Cada endpoint tiene validaciones específicas para mantener la integridad de los datos:
+
+### Especialidades
+- ✅ El **nombre** es obligatorio, máximo 120 caracteres
+- ✅ El **nombre** debe ser único (no se permiten duplicados)
+- ✅ No se puede crear/editar sin autenticación
+- ⚠️ Al eliminar, se marca como inactiva (soft delete), no se borra
+
+### Médicos
+- ✅ El **documento** es único
+- ✅ El **email** es único
+- ✅ La **matrícula** es única
+- ✅ El **ID de especialidad** debe existir
+- ✅ El **valor_consulta** debe ser un número positivo
+- ✅ La **contraseña** mínimo 6 caracteres (se hashea con bcrypt)
+- ⚠️ Crear un médico crea automáticamente un usuario (rol 1)
+
+### Pacientes
+- ✅ El **documento** es único
+- ✅ El **email** es único
+- ✅ El **ID de obra social** debe existir
+- ✅ Solo **Admin** puede crear/editar/eliminar pacientes
+- ⚠️ Crear un paciente crea automáticamente un usuario (rol 2)
+
+### Turnos
+- ✅ El **id_medico** y **id_paciente** deben existir
+- ✅ La **fecha_hora** debe estar en formato ISO 8601 (2026-04-15T10:30:00)
+- ✅ No se puede crear un turno en el pasado
+- ✅ No se puede reservar turno para un médico qe no tiene especialidad asignada
+- ⚠️ Al crear un turno, se usa **transacción** para garantizar consistencia
+
+### Obras Sociales
+- ✅ El **nombre** es único
+- ✅ El **porcentaje_descuento** debe ser un número entre 0 y 100
+- ✅ El campo **es_particular** es booleano
+
+### Autenticación
+- ✅ El **email** debe ser válido
+- ✅ La **contraseña** se valida contra SHA256 (usuarios antiguos) o bcrypt (nuevos)
+- ✅ El **token JWT** expira en 8 horas
+- ✅ Sin token válido no se puede acceder a endpoints protegidos
+
+## Transacciones en la Base de Datos 💾
+
+Las transacciones garantizan qe múltiples operaciones se ejecuten de forma atómica (todo o nada). Se usan en:
+
+### 1️⃣ Creación de Médicos
+**Archivo:** `src/models/medicos.model.js`
+
+```sql
+START TRANSACTION;
+  INSERT INTO usuarios (...) VALUES (...);
+  INSERT INTO medicos (...) VALUES (...);
+COMMIT;
+```
+
+**Por qué:** Si la inserción del usuario falla, el médico también debe fallar. No queremos usuarios sin médicos o médicos sin usuarios.
+
+### 2️⃣ Creación de Pacientes
+**Archivo:** `src/models/pacientes.model.js`
+
+```sql
+START TRANSACTION;
+  INSERT INTO usuarios (...) VALUES (...);
+  INSERT INTO pacientes (...) VALUES (...);
+COMMIT;
+```
+
+**Por qué:** Mismo caso: si falla el usuario, debe fallar el paciente.
+
+### 3️⃣ Creación de Turnos
+**Archivo:** `src/models/turnos.model.js`
+
+```sql
+START TRANSACTION;
+  INSERT INTO turnos_reservas (...) VALUES (...);
+  UPDATE medicos SET ... (si es necesario);
+  UPDATE pacientes SET ... (si es necesario);
+COMMIT;
+```
+
+**Por qué:** La creación de un turno puede afectar múltiples tablas. Si algo falla a mitad de camino, toda la operación se revierte.
+
+### Cómo funciona en el código:
+
+Si ocurre un error durante una transacción, el middleware captura la excepción y ejecuta `ROLLBACK` automáticamente:
+
+```javascript
+try {
+    await pool.query('START TRANSACTION');
+    // Múltiples inserts/updates
+    await pool.query('COMMIT');
+} catch (error) {
+    await pool.query('ROLLBACK');
+    // Retorna error al cliente
+}
 ```
 
 ## Problemas que tuve (y capaz vos también)
