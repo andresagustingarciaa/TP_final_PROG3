@@ -2,6 +2,28 @@
 
 API REST completa para gestionar una clínica, incluyendo especialidades, médicos, pacientes, turnos y obras sociales.
 
+---
+
+## 📑 Índice de Contenidos
+
+1. [Que hace este código?](#que-hace-este-codigo)
+2. [Cómo instalar esto](#cómo-instalar-esto)
+3. [Autenticación y Sistema de Contraseñas 🔐](#autenticación-y-sistema-de-contraseñas-)
+4. [Roles y Permisos 👥](#roles-y-permisos-)
+5. [Flujo de Autenticación paso a paso 🔄](#flujo-de-autenticación-paso-a-paso-)
+6. [Todos los Endpoints Disponibles 📍](#todos-los-endpoints-disponibles-)
+7. [Stored Procedures de la BD 🗂️](#stored-procedures-sp-de-la-base-de-datos-)
+8. [Módulos y Estructura de Carpetas 📂](#módulos-y-estructura-de-carpetas-)
+9. [Soft Delete](#soft-delete)
+10. [Estructura del proyecto](#estructura-del-proyecto)
+11. [Tecnologías que usé](#tecnologías-que-usé)
+12. [Dependencias del Proyecto 📦](#dependencias-del-proyecto-)
+13. [Validaciones y Reglas de Negocio 🔒](#validaciones-y-reglas-de-negocio-)
+14. [Transacciones en la Base de Datos 💾](#transacciones-en-la-base-de-datos-)
+15. [Problemas que tuve (y capaz vos también)](#problemas-que-tuve-y-capaz-vos-también)
+
+---
+
 ## Que hace este codigo?
 
 Es un servidor que te permite:
