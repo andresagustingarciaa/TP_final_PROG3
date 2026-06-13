@@ -528,7 +528,7 @@ Aca está todo lo qe se instala con `npm install`:
 | **mysql2** | 3.22.3 | Driver para conectarse a MySQL desde Node.js. Sin esto, no podríamos acceder a la base de datos |
 | **pdfkit** | 0.19.1 | Librería para generar PDFs. Se usa en el endpoint `/reportes/turnos` para descargar informes |
 | **swagger-jsdoc** | 6.3.0 | Genera documentación Swagger/OpenAPI de los endpoints a partir de comentarios en el código |
-| **swagger-ui-express** | 5.0.1 | Interfaz gráfica para ver la documentación de la API (normalmente en `/api-docs`) |
+| **swagger-ui-express** | 5.0.1 | Interfaz gráfica para ver la documentación de la API (en `/api-docs`) |
 
 ### Dependencias de Desarrollo (`devDependencies`)
 
