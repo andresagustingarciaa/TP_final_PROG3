@@ -393,3 +393,60 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+-- --------------------------------------------------------
+--
+-- Stored Procedures para estadisticas de atenciones (rol Administrador)
+--
+
+DELIMITER $$
+
+-- Resumen general de turnos: totales, atendidos, pendientes y monto recaudado
+CREATE PROCEDURE `sp_estadisticas_generales` ()
+BEGIN
+    SELECT
+        COUNT(*) AS total_turnos,
+        SUM(CASE WHEN atentido = 1 THEN 1 ELSE 0 END) AS turnos_atendidos,
+        SUM(CASE WHEN atentido = 0 THEN 1 ELSE 0 END) AS turnos_pendientes,
+        COALESCE(SUM(CASE WHEN atentido = 1 THEN valor_total ELSE 0 END), 0) AS total_recaudado
+    FROM turnos_reservas
+    WHERE activo = 1;
+END$$
+
+-- Cantidad de turnos y monto recaudado agrupado por obra social
+CREATE PROCEDURE `sp_estadisticas_por_obra_social` ()
+BEGIN
+    SELECT
+        os.id_obra_social,
+        os.nombre AS obra_social,
+        COUNT(tr.id_turno_reserva) AS cantidad_turnos,
+        SUM(CASE WHEN tr.atentido = 1 THEN 1 ELSE 0 END) AS turnos_atendidos,
+        COALESCE(SUM(CASE WHEN tr.atentido = 1 THEN tr.valor_total ELSE 0 END), 0) AS total_recaudado
+    FROM obras_sociales os
+    LEFT JOIN turnos_reservas tr ON tr.id_obra_social = os.id_obra_social AND tr.activo = 1
+    WHERE os.activo = 1
+    GROUP BY os.id_obra_social, os.nombre
+    ORDER BY cantidad_turnos DESC;
+END$$
+
+-- Cantidad de turnos atendidos por medico, incluyendo especialidad y pacientes distintos atendidos
+CREATE PROCEDURE `sp_estadisticas_por_medico` ()
+BEGIN
+    SELECT
+        m.id_medico,
+        u.apellido,
+        u.nombres,
+        e.nombre AS especialidad,
+        COUNT(tr.id_turno_reserva) AS cantidad_turnos,
+        SUM(CASE WHEN tr.atentido = 1 THEN 1 ELSE 0 END) AS turnos_atendidos,
+        COUNT(DISTINCT tr.id_paciente) AS pacientes_atendidos
+    FROM medicos m
+    JOIN usuarios u ON u.id_usuario = m.id_usuario
+    JOIN especialidades e ON e.id_especialidad = m.id_especialidad
+    LEFT JOIN turnos_reservas tr ON tr.id_medico = m.id_medico AND tr.activo = 1
+    WHERE u.activo = 1
+    GROUP BY m.id_medico, u.apellido, u.nombres, e.nombre
+    ORDER BY cantidad_turnos DESC;
+END$$
+
+DELIMITER ;

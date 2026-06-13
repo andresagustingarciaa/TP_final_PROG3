@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const pool = require('../db.js');
+const estadisticasService = require('../services/estadisticas.service');
 
 // Registra un nuevo usuario con rol de administrador (ROL = 3)
 // Solo otro administrador puede usar este endpoint
@@ -52,4 +53,14 @@ const registrarAdmin = async (req, res) => {
     }
 };
 
-module.exports = { registrarAdmin };
+// Devuelve estadísticas de atenciones generadas mediante stored procedures
+const obtenerEstadisticas = async (req, res) => {
+    try {
+        const data = await estadisticasService.getEstadisticas();
+        res.status(200).json({ ok: true, data });
+    } catch (error) {
+        res.status(500).json({ ok: false, message: error.message });
+    }
+};
+
+module.exports = { registrarAdmin, obtenerEstadisticas };

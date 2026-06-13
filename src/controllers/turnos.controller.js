@@ -42,51 +42,66 @@ const byPaciente = async (req, res) => {
     }
 };
 
-// Registra un nuevo turno calculando el valor_total según obra social del paciente
+
+// Registra un nuevo turno usando Transacciones MySQL
 const add = async (req, res) => {
+    // 1. Solicitamos una conexión exclusiva del pool
+    const connection = await pool.getConnection();
+    
     try {
+        // 2. Iniciamos la transacción
+        await connection.beginTransaction();
+
         const { id_medico, id_paciente, fecha_hora } = req.body;
 
-        // Obtener datos del médico (valor_consulta)
-        const [medicoRows] = await pool.query(
+        const [medicoRows] = await connection.query(
             'SELECT m.valor_consulta, m.id_medico FROM medicos m JOIN usuarios u ON m.id_usuario = u.id_usuario WHERE m.id_medico = ? AND u.activo = 1',
             [id_medico]
         );
-        if (medicoRows.length === 0) return res.status(404).json({ ok: false, message: 'Médico no encontrado' });
+        if (medicoRows.length === 0) throw new Error('Médico no encontrado');
 
-        // Obtener datos del paciente (obra social y su descuento)
-        const [pacienteRows] = await pool.query(
-            `SELECT p.id_obra_social, os.porcentaje_descuento
+        const [pacienteRows] = await connection.query(
+            `SELECT p.id_obra_social, os.porcentaje_descuento, os.es_particular
              FROM pacientes p
              JOIN usuarios u ON p.id_usuario = u.id_usuario
              JOIN obras_sociales os ON p.id_obra_social = os.id_obra_social
              WHERE p.id_paciente = ? AND u.activo = 1`,
             [id_paciente]
         );
-        if (pacienteRows.length === 0) return res.status(404).json({ ok: false, message: 'Paciente no encontrado' });
+        if (pacienteRows.length === 0) throw new Error('Paciente no encontrado');
 
         const { valor_consulta } = medicoRows[0];
-        const { id_obra_social, porcentaje_descuento } = pacienteRows[0];
+        const { id_obra_social, porcentaje_descuento, es_particular } = pacienteRows[0];
 
-        // Calcular valor total con descuento de la obra social
-        const descuento = (valor_consulta * porcentaje_descuento) / 100;
-        const valor_total = parseFloat((valor_consulta - descuento).toFixed(2));
+        // 3. Regla de negocio corregida: si es particular no hay descuento
+        let valor_total = valor_consulta;
+        if (es_particular === 0) {
+            const descuento = (valor_consulta * porcentaje_descuento) / 100;
+            valor_total = parseFloat((valor_consulta - descuento).toFixed(2));
+        }
 
-        const result = await turnosService.create({ id_medico, id_paciente, id_obra_social, fecha_hora, valor_total });
+        // 4. Insertar directamente usando la conexión de la transacción
+        const [result] = await connection.query(
+            `INSERT INTO turnos_reservas (id_medico, id_paciente, id_obra_social, fecha_hora, valor_total, atentido, activo) 
+             VALUES (?, ?, ?, ?, ?, 0, 1)`,
+            [id_medico, id_paciente, id_obra_social, fecha_hora, valor_total]
+        );
+
+        // 5. ¡Todo salió bien! Confirmamos los cambios en la DB
+        await connection.commit();
 
         res.status(201).json({
             ok: true,
-            data: {
-                id_turno_reserva: result.insertId,
-                id_medico,
-                id_paciente,
-                id_obra_social,
-                fecha_hora,
-                valor_total
-            }
+            data: { id_turno_reserva: result.insertId, id_medico, id_paciente, id_obra_social, fecha_hora, valor_total }
         });
     } catch (error) {
-        res.status(500).json({ ok: false, message: error.message });
+        // 6. ¡Algo falló! Deshacemos todo para que no queden datos corruptos
+        await connection.rollback();
+        const status = error.message.includes('no encontrado') ? 404 : 500;
+        res.status(status).json({ ok: false, message: error.message });
+    } finally {
+        // 7. Liberamos la conexión para que vuelva al pool
+        if (connection) connection.release();
     }
 };
 

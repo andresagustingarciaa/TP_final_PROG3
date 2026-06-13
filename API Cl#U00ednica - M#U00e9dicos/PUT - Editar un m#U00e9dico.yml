@@ -1,0 +1,43 @@
+info:
+  name: PUT - Editar un médico
+  type: http
+  seq: 4
+
+http:
+  method: PUT
+  url: http://localhost:3000/api/v1/medicos/1
+  headers:
+    - name: Content-Type
+      value: application/json
+  body:
+    type: json
+    data: |-
+      {
+        "documento": "31000111",
+        "apellido": "Lopez",
+        "nombres": "Marcelo",
+        "email": "lopmar@correo.com",
+        "id_especialidad": 1,
+        "matricula": 1000,
+        "descripcion": "Pediatra actualizado",
+        "valor_consulta": 6000
+      }
+  auth: inherit
+
+settings:
+  encodeUrl: true
+  timeout: 0
+  followRedirects: true
+  maxRedirects: 5
+
+docs: |-
+  MODIFICA un médico existente. Cambia:
+  - El ID (número al final de la URL) por el que quieras editar
+  - Los campos del JSON
+
+  La contraseña es opcional, solo la mandás si querés cambiarla.
+
+  Respuesta exitosa: 200
+  No encontrado: 404
+  Datos inválidos: 400
+  Duplicado: 409

@@ -5,80 +5,139 @@ const { verificarToken, verificarRol } = require('../middlewares/auth.middleware
 const { validar, validarId } = require('../middlewares/validation.middleware');
 const { body } = require('express-validator');
 
-// Validaciones específicas de paciente
+// [Acá van tus constantes validarPaciente y validarPacienteEdit que ya tenías]
 const validarPaciente = [
-    body('documento')
-        .notEmpty().withMessage('El documento es requerido')
-        .isString().withMessage('El documento debe ser texto')
-        .isLength({ max: 20 }).withMessage('El documento no puede superar los 20 caracteres')
-        .trim(),
-    body('apellido')
-        .notEmpty().withMessage('El apellido es requerido')
-        .isString().withMessage('El apellido debe ser texto')
-        .isLength({ max: 100 }).withMessage('El apellido no puede superar los 100 caracteres')
-        .trim(),
-    body('nombres')
-        .notEmpty().withMessage('Los nombres son requeridos')
-        .isString().withMessage('Los nombres deben ser texto')
-        .isLength({ max: 100 }).withMessage('Los nombres no pueden superar los 100 caracteres')
-        .trim(),
-    body('email')
-        .notEmpty().withMessage('El email es requerido')
-        .isEmail().withMessage('El email no es válido')
-        .isLength({ max: 255 }).withMessage('El email no puede superar los 255 caracteres')
-        .trim(),
-    body('contrasenia')
-        .notEmpty().withMessage('La contraseña es requerida')
-        .isLength({ min: 6 }).withMessage('La contraseña debe tener al menos 6 caracteres'),
-    body('id_obra_social')
-        .notEmpty().withMessage('La obra social es requerida')
-        .isInt({ min: 1 }).withMessage('La obra social debe ser un número entero positivo')
+    body('documento').notEmpty().isString().isLength({ max: 20 }).trim(),
+    body('apellido').notEmpty().isString().isLength({ max: 100 }).trim(),
+    body('nombres').notEmpty().isString().isLength({ max: 100 }).trim(),
+    body('email').notEmpty().isEmail().isLength({ max: 255 }).trim(),
+    body('contrasenia').notEmpty().isLength({ min: 6 }),
+    body('id_obra_social').notEmpty().isInt({ min: 1 })
 ];
 
 const validarPacienteEdit = [
-    body('documento')
-        .notEmpty().withMessage('El documento es requerido')
-        .isString().withMessage('El documento debe ser texto')
-        .isLength({ max: 20 }).withMessage('El documento no puede superar los 20 caracteres')
-        .trim(),
-    body('apellido')
-        .notEmpty().withMessage('El apellido es requerido')
-        .isString().withMessage('El apellido debe ser texto')
-        .isLength({ max: 100 }).withMessage('El apellido no puede superar los 100 caracteres')
-        .trim(),
-    body('nombres')
-        .notEmpty().withMessage('Los nombres son requeridos')
-        .isString().withMessage('Los nombres deben ser texto')
-        .isLength({ max: 100 }).withMessage('Los nombres no pueden superar los 100 caracteres')
-        .trim(),
-    body('email')
-        .notEmpty().withMessage('El email es requerido')
-        .isEmail().withMessage('El email no es válido')
-        .isLength({ max: 255 }).withMessage('El email no puede superar los 255 caracteres')
-        .trim(),
-    body('id_obra_social')
-        .notEmpty().withMessage('La obra social es requerida')
-        .isInt({ min: 1 }).withMessage('La obra social debe ser un número entero positivo')
+    body('documento').notEmpty().isString().isLength({ max: 20 }).trim(),
+    body('apellido').notEmpty().isString().isLength({ max: 100 }).trim(),
+    body('nombres').notEmpty().isString().isLength({ max: 100 }).trim(),
+    body('email').notEmpty().isEmail().isLength({ max: 255 }).trim(),
+    body('id_obra_social').notEmpty().isInt({ min: 1 })
 ];
 
-// GET /api/v1/pacientes — lista todos los pacientes activos
-// Respuesta exitosa: 200
+/**
+ * @swagger
+ * /api/v1/pacientes:
+ *   get:
+ *     summary: Lista todos los pacientes activos
+ *     tags: [Pacientes]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Lista obtenida exitosamente
+ */
 router.get('/', verificarToken, pacientesController.browse);
 
-// GET /api/v1/pacientes/:id — trae un paciente por ID
-// Respuesta exitosa: 200 | No encontrado: 404 | ID inválido: 400
+/**
+ * @swagger
+ * /api/v1/pacientes/{id}:
+ *   get:
+ *     summary: Trae un paciente por ID
+ *     tags: [Pacientes]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Paciente encontrado
+ *       404:
+ *         description: No encontrado
+ */
 router.get('/:id', verificarToken, validarId, validar, pacientesController.read);
 
-// POST /api/v1/pacientes — crea un nuevo paciente
-// Respuesta exitosa: 201 | Datos inválidos: 400 | Ya existe: 409
+/**
+ * @swagger
+ * /api/v1/pacientes:
+ *   post:
+ *     summary: Crea un nuevo paciente (Solo Admin)
+ *     tags: [Pacientes]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               documento: {type: string}
+ *               apellido: {type: string}
+ *               nombres: {type: string}
+ *               email: {type: string}
+ *               contrasenia: {type: string}
+ *               id_obra_social: {type: integer}
+ *     responses:
+ *       201:
+ *         description: Paciente creado exitosamente
+ *       409:
+ *         description: El paciente ya existe
+ */
 router.post('/', verificarToken, verificarRol(3), validarPaciente, validar, pacientesController.add);
 
-// PUT /api/v1/pacientes/:id — edita un paciente existente
-// Respuesta exitosa: 200 | No encontrado: 404 | Datos inválidos: 400
+/**
+ * @swagger
+ * /api/v1/pacientes/{id}:
+ *   put:
+ *     summary: Edita un paciente existente (Solo Admin)
+ *     tags: [Pacientes]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               documento: {type: string}
+ *               apellido: {type: string}
+ *               nombres: {type: string}
+ *               email: {type: string}
+ *               id_obra_social: {type: integer}
+ *     responses:
+ *       200:
+ *         description: Paciente editado exitosamente
+ */
 router.put('/:id', verificarToken, verificarRol(3), validarId, validarPacienteEdit, validar, pacientesController.edit);
 
-// DELETE /api/v1/pacientes/:id — elimina (soft delete) un paciente
-// Respuesta exitosa: 200 | No encontrado: 404 | ID inválido: 400
+/**
+ * @swagger
+ * /api/v1/pacientes/{id}:
+ *   delete:
+ *     summary: Elimina (soft delete) un paciente (Solo Admin)
+ *     tags: [Pacientes]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Paciente eliminado
+ */
 router.delete('/:id', verificarToken, verificarRol(3), validarId, validar, pacientesController.remove);
 
 module.exports = router;

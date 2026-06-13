@@ -11,72 +11,214 @@ const {
     validarIdObraSocialParam
 } = require('../middlewares/validation.middleware');
 
-// GET /api/v1/medicos — lista todos los medicos activos
-// Respuesta exitosa: 200
+/**
+ * @swagger
+ * /api/v1/medicos:
+ *   get:
+ *     summary: Lista todos los médicos activos
+ *     tags: [Médicos]
+ *     responses:
+ *       200:
+ *         description: Lista de médicos obtenida exitosamente
+ */
 router.get('/', medicosController.browse);
 
-// GET /api/v1/medicos/:id — trae un medico por ID
-// Respuesta exitosa: 200 | No encontrado: 404 | ID invalido: 400
+/**
+ * @swagger
+ * /api/v1/medicos/{id}:
+ *   get:
+ *     summary: Trae un médico por ID
+ *     tags: [Médicos]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           description: ID del médico
+ *     responses:
+ *       200:
+ *         description: Médico encontrado exitosamente
+ *       400:
+ *         description: ID inválido
+ *       404:
+ *         description: Médico no encontrado
+ */
 router.get('/:id', validarId, validar, medicosController.read);
 
-// POST /api/v1/medicos — crea un nuevo medico (usuario + medico)
-// JSON esperado:
-// {
-//   "documento": "31000999",
-//   "apellido": "García",
-//   "nombres": "Ana",
-//   "email": "ana@correo.com",
-//   "contrasenia": "123456",
-//   "id_especialidad": 1,
-//   "matricula": 5000,
-//   "descripcion": "Pediatra",
-//   "valor_consulta": 8000
-// }
-// Respuesta exitosa: 201 | Datos invalidos: 400 | Duplicado: 409
+/**
+ * @swagger
+ * /api/v1/medicos:
+ *   post:
+ *     summary: Crea un nuevo médico (usuario + médico)
+ *     tags: [Médicos]
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               documento:
+ *                 type: string
+ *                 example: "31000999"
+ *                 apellido:
+ *                   type: string
+ *                   example: "García"
+ *                   nombres:
+ *                     type: string
+ *                     example: "Ana"
+ *                     email:
+ *                       type: string
+ *                       example: "ana@correo.com"
+ *                       contrasenia:
+ *                         type: string
+ *                         example: "123456"
+ *                         id_especialidad:
+ *                           type: integer
+ *                           example: 1
+ *                           matricula:
+ *                             type: integer
+ *                             example: 5000
+ *                             descripcion:
+ *                               type: string
+ *                               example: "Pediatra"
+ *                               valor_consulta:
+ *                                 type: number
+ *                                 example: 8000
+ *     responses:
+ *       201:
+ *         description: Médico creado exitosamente
+ *       400:
+ *         description: Datos inválidos
+ *       409:
+ *         description: El médico ya existe
+ */
 router.post('/', validarMedico, validar, medicosController.add);
 
-// PUT /api/v1/medicos/:id — edita un medico existente
-// JSON esperado:
-// {
-//   "documento": "31000999",
-//   "apellido": "García",
-//   "nombres": "Ana",
-//   "email": "ana@correo.com",
-//   "contrasenia": "123456",        // opcional (no hace falta si no la cambia)
-//   "id_especialidad": 1,
-//   "matricula": 5000,
-//   "descripcion": "Pediatra",
-//   "valor_consulta": 8000
-// }
-// Respuesta exitosa: 200 | No encontrado: 404 | Datos invalidos: 400
+/**
+ * @swagger
+ * /api/v1/medicos/{id}:
+ *   put:
+ *     summary: Edita un médico existente
+ *     tags: [Médicos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *           description: ID del médico a editar
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               documento:
+ *                 type: string
+ *                 apellido:
+ *                   type: string
+ *                   nombres:
+ *                     type: string
+ *                     email:
+ *                       type: string
+ *                       contrasenia:
+ *                         type: string
+ *                         description: Opcional
+ *                         id_especialidad:
+ *                           type: integer
+ *                           matricula:
+ *                             type: integer
+ *                             descripcion:
+ *                               type: string
+ *                               valor_consulta:
+ *                                 type: number
+ *     responses:
+ *       200:
+ *         description: Médico editado exitosamente
+ *       400:
+ *         description: Datos inválidos
+ *       404:
+ *         description: Médico no encontrado
+ */
 router.put('/:id', validarId, validarMedicoEdit, validar, medicosController.edit);
 
-// DELETE /api/v1/medicos/:id — elimina (soft delete) un medico
-// Respuesta exitosa: 200 | No encontrado: 404 | ID invalido: 400
+/**
+ * @swagger
+ * /api/v1/medicos/{id}:
+ *   delete:
+ *     summary: Elimina (soft delete) un médico
+ *     tags: [Médicos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Médico eliminado exitosamente
+ *       400:
+ *         description: ID inválido
+ *       404:
+ *         description: Médico no encontrado
+ */
 router.delete('/:id', validarId, validar, medicosController.remove);
 
-// PUT /api/v1/medicos/:id/especialidad — asocia una especialidad al medico
-// JSON esperado:
-// {
-//   "id_especialidad": 2
-// }
-// Respuesta exitosa: 200 | No encontrado: 404 | Datos invalidos: 400
+/**
+ * @swagger
+ * /api/v1/medicos/{id}/especialidad:
+ *   put:
+ *     summary: Asocia una especialidad al médico
+ *     tags: [Médicos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id_especialidad:
+ *                 type: integer
+ *                 example: 2
+ *     responses:
+ *       200:
+ *         description: Especialidad asociada exitosamente
+ *       400:
+ *         description: Datos inválidos
+ *       404:
+ *         description: Médico o especialidad no encontrados
+ */
 router.put('/:id/especialidad', validarId, validarIdEspecialidad, validar, medicosController.asociarEspecialidad);
 
-// GET /api/v1/medicos/:id/obras-sociales — lista las obras sociales del medico
-// Respuesta exitosa: 200 | No encontrado: 404
-router.get('/:id/obras-sociales', validarId, validar, medicosController.listarObrasSociales);
-
-// POST /api/v1/medicos/:id/obras-sociales — asocia una obra social al medico
-// JSON esperado:
-// {
-//   "id_obra_social": 2
-// }
-// Respuesta exitosa: 201 | No encontrado: 404 | Ya asociada: 409
-router.post('/:id/obras-sociales', validarId, validarIdObraSocial, validar, medicosController.asociarObraSocial);
-
-// DELETE /api/v1/medicos/:id/obras-sociales/:idObraSocial — desasocia una obra social (soft delete)
-// Respuesta exitosa: 200 | No encontrada: 404
-router.delete('/:id/obras-sociales/:idObraSocial', validarId, validarIdObraSocialParam, validar, medicosController.desasociarObraSocial);
-
-module.exports = router;
+/**
+ * @swagger
+ * /api/v1/medicos/{id}/obras-sociales:
+ *   get:
+ *     summary: Lista las obras sociales asociadas a un médico
+ *     tags: [Médicos]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Lista de obras sociales obtenida*/
