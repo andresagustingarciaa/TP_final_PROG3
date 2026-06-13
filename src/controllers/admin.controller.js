@@ -27,7 +27,7 @@ const registrarAdmin = async (req, res) => {
             return res.status(409).json({ ok: false, message: 'El email ya está registrado' });
         }
 
-        // Hashear contraseña antes de guardar
+        // Hashear contraseña con bcrypt
         const hash = await bcrypt.hash(contrasenia, 10);
 
         // Insertar en usuarios con rol 3 (administradorr)

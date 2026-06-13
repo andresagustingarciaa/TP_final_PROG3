@@ -1,6 +1,12 @@
+const crypto = require('crypto');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const pool = require('../db');
+
+// Genera hash SHA256 de una contraseña
+const hashPassword = (password) => {
+    return crypto.createHash('sha256').update(password).digest('hex');
+};
 
 // Busca el usuario por email y verifica la contraseña
 const login = async (email, contrasenia) => {
@@ -12,8 +18,18 @@ const login = async (email, contrasenia) => {
 
     const usuario = rows[0];
 
-    // Compara la contraseña ingresada con la guardada (encriptada)
-    const passwordValida = await bcrypt.compare(contrasenia, usuario.contrasenia);
+    // Intenta validar con bcrypt (nuevos usuarios) y SHA256 (usuarios existentes)
+    let passwordValida = false;
+    
+    // Primero intenta con bcrypt (para nuevos usuarios)
+    try {
+        passwordValida = await bcrypt.compare(contrasenia, usuario.contrasenia);
+    } catch (e) {
+        // Si bcrypt falla, intenta con SHA256 (para usuarios existentes)
+        const contraseniaHash = hashPassword(contrasenia);
+        passwordValida = contraseniaHash === usuario.contrasenia;
+    }
+    
     if (!passwordValida) return null;
 
     // Genera el token JWT con el id, email y rol del usuario
