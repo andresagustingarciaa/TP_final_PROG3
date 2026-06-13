@@ -141,10 +141,29 @@ const login = async (email, contrasenia) => {
 | POST | `/api/v1/auth/login` | Inicia sesión y devuelve token JWT |
 
 **Ejemplo de uso:**
+
+
+**Medico**
+```json
+ {
+  "email": "benhor@correo.com",
+  "contrasenia": "benhor"
+}
+```
+
+**Admin**
 ```json
 {
-  "email": "lopmar@correo.com",
-  "contrasenia": "miContraseña123"
+  "email": "ferben@correo.com",
+  "contrasenia": "ferben"
+}
+```
+
+**Paciente**
+```json
+{
+  "email": "lopjac@correo.com",
+  "contrasenia": "lopjac"
 }
 ```
 

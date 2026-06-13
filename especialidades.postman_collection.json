@@ -1,107 +1,238 @@
 {
   "info": {
-    "name": "API Clínica - Especialidades",
-    "description": "Pruebas de todos los endpoints de especialidades",
+    "name": "API Clínica - Completa",
+    "description": "Colección completa de todos los endpoints de la API Clínica",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "GET - Todas las especialidades",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "http://localhost:3000/api/v1/especialidades",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "3000",
-          "path": ["api", "v1", "especialidades"]
-        },
-        "description": "Trae TODAS las especialidades que existen (solo las activas)"
-      },
-      "response": []
+      "name": "Autenticación",
+      "item": [
+        {
+          "name": "POST - Login",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\"email\": \"lopmar@correo.com\", \"contrasenia\": \"123456\"}"},
+            "url": {"raw": "http://localhost:3000/api/v1/auth/login", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "v1", "auth", "login"]},
+            "description": "INICIA SESIÓN y devuelve un token JWT."
+          },
+          "response": []
+        }
+      ]
     },
     {
-      "name": "GET - Una especialidad por ID",
-      "request": {
-        "method": "GET",
-        "header": [],
-        "url": {
-          "raw": "http://localhost:3000/api/v1/especialidades/1",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "3000",
-          "path": ["api", "v1", "especialidades", "1"]
+      "name": "Especialidades",
+      "item": [
+        {
+          "name": "GET - Todas las especialidades",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {"raw": "http://localhost:3000/api/v1/especialidades", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "v1", "especialidades"]},
+            "description": "Trae TODAS las especialidades que existen (solo las activas)"
+          },
+          "response": []
         },
-        "description": "Trae UNA especialidad específica. Cambia el número al final según el ID que quieras probar.\n\nRespuesta exitosa: 200\nNo encontrada: 404\nID inválido: 400"
-      },
-      "response": []
+        {
+          "name": "GET - Una especialidad por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {"raw": "http://localhost:3000/api/v1/especialidades/1", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "v1", "especialidades", "1"]},
+            "description": "Trae UNA especialidad específica por su ID"
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Crear nueva especialidad",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\"nombre\": \"Cardiología\"}"},
+            "url": {"raw": "http://localhost:3000/api/v1/especialidades", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "v1", "especialidades"]},
+            "description": "CREA una nueva especialidad. Requiere autenticación."
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Editar una especialidad",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\"nombre\": \"Cardiología Avanzada\"}"},
+            "url": {"raw": "http://localhost:3000/api/v1/especialidades/1", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "v1", "especialidades", "1"]},
+            "description": "MODIFICA el nombre de una especialidad. Requiere autenticación."
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Eliminar una especialidad",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {"raw": "http://localhost:3000/api/v1/especialidades/1", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "v1", "especialidades", "1"]},
+            "description": "ELIMINA una especialidad (soft delete). Requiere autenticación."
+          },
+          "response": []
+        }
+      ]
     },
     {
-      "name": "POST - Crear nueva especialidad",
-      "request": {
-        "method": "POST",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"nombre\": \"Cardiología\"\n}"
+      "name": "Médicos",
+      "item": [
+        {
+          "name": "GET - Todos los médicos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {"raw": "http://localhost:3000/api/v1/medicos", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "v1", "medicos"]},
+            "description": "Trae TODOS los médicos"
+          },
+          "response": []
         },
-        "url": {
-          "raw": "http://localhost:3000/api/v1/especialidades",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "3000",
-          "path": ["api", "v1", "especialidades"]
+        {
+          "name": "GET - Un médico por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {"raw": "http://localhost:3000/api/v1/medicos/1", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "v1", "medicos", "1"]},
+            "description": "Trae UN médico específico por su ID"
+          },
+          "response": []
         },
-        "description": "CREA una nueva especialidad. Cambia el nombre por lo que quieras crear.\n\nPuedes probar con:\n- \"Dermatología\"\n- \"Pediatría\"\n- \"Ortopedia\"\n- Lo que se te ocurra\n\nRespuesta exitosa: 201\nDatos inválidos: 400 (si no pones nombre o es muy largo)"
-      },
-      "response": []
+        {
+          "name": "POST - Crear nuevo médico",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\"nombres\": \"Juan\", \"apellido\": \"Pérez\", \"documento\": \"12345678\", \"email\": \"juan@correo.com\", \"matrícula\": \"MP123456\", \"valor_consulta\": 500, \"id_especialidad\": 1, \"contrasenia\": \"123456\"}"},
+            "url": {"raw": "http://localhost:3000/api/v1/medicos", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "v1", "medicos"]},
+            "description": "CREA un nuevo médico (y su usuario automáticamente). Requiere autenticación."
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Editar un médico",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\"nombres\": \"Juan Carlos\", \"valor_consulta\": 600}"},
+            "url": {"raw": "http://localhost:3000/api/v1/medicos/1", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "v1", "medicos", "1"]},
+            "description": "MODIFICA datos de un médico. Requiere autenticación."
+          },
+          "response": []
+        },
+        {
+          "name": "PUT - Asociar especialidad",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\"id_especialidad\": 2}"},
+            "url": {"raw": "http://localhost:3000/api/v1/medicos/1/especialidad", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "v1", "medicos", "1", "especialidad"]},
+            "description": "ASOCIA una especialidad a un médico. Requiere autenticación."
+          },
+          "response": []
+        },
+        {
+          "name": "GET - Obras sociales del médico",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {"raw": "http://localhost:3000/api/v1/medicos/1/obras-sociales", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "v1", "medicos", "1", "obras-sociales"]},
+            "description": "OBTIENE todas las obras sociales asociadas a un médico"
+          },
+          "response": []
+        },
+        {
+          "name": "POST - Asociar obra social",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\"id_obra_social\": 1}"},
+            "url": {"raw": "http://localhost:3000/api/v1/medicos/1/obras-sociales", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "v1", "medicos", "1", "obras-sociales"]},
+            "description": "ASOCIA una obra social a un médico. Requiere autenticación."
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Desasociar obra social",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {"raw": "http://localhost:3000/api/v1/medicos/1/obras-sociales/1", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "v1", "medicos", "1", "obras-sociales", "1"]},
+            "description": "DESASOCIA una obra social de un médico. Requiere autenticación."
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Eliminar un médico",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {"raw": "http://localhost:3000/api/v1/medicos/1", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "v1", "medicos", "1"]},
+            "description": "ELIMINA un médico (soft delete). Requiere autenticación."
+          },
+          "response": []
+        }
+      ]
     },
     {
-      "name": "PUT - Editar una especialidad",
-      "request": {
-        "method": "PUT",
-        "header": [
-          {
-            "key": "Content-Type",
-            "value": "application/json"
-          }
-        ],
-        "body": {
-          "mode": "raw",
-          "raw": "{\n  \"nombre\": \"Cardiología Avanzada\"\n}"
+      "name": "Obras Sociales",
+      "item": [
+        {
+          "name": "GET - Todas las obras sociales",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {"raw": "http://localhost:3000/api/v1/obras-sociales", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "v1", "obras-sociales"]},
+            "description": "Trae TODAS las obras sociales"
+          },
+          "response": []
         },
-        "url": {
-          "raw": "http://localhost:3000/api/v1/especialidades/1",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "3000",
-          "path": ["api", "v1", "especialidades", "1"]
+        {
+          "name": "GET - Una obra social por ID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {"raw": "http://localhost:3000/api/v1/obras-sociales/1", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "v1", "obras-sociales", "1"]},
+            "description": "Trae UNA obra social específica por su ID"
+          },
+          "response": []
         },
-        "description": "MODIFICA el nombre de una especialidad existente. Cambia:\n- El ID (número al final de la URL) por el que quieras editar\n- El \"nombre\" por el nuevo nombre\n\nRespuesta exitosa: 200\nNo encontrada: 404\nDatos inválidos: 400"
-      },
-      "response": []
-    },
-    {
-      "name": "DELETE - Eliminar una especialidad",
-      "request": {
-        "method": "DELETE",
-        "header": [],
-        "url": {
-          "raw": "http://localhost:3000/api/v1/especialidades/1",
-          "protocol": "http",
-          "host": ["localhost"],
-          "port": "3000",
-          "path": ["api", "v1", "especialidades", "1"]
+        {
+          "name": "POST - Crear nueva obra social",
+          "request": {
+            "method": "POST",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\"nombre\": \"OSDE\", \"porcentaje_descuento\": 20, \"es_particular\": false}"},
+            "url": {"raw": "http://localhost:3000/api/v1/obras-sociales", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "v1", "obras-sociales"]},
+            "description": "CREA una nueva obra social. Requiere autenticación."
+          },
+          "response": []
         },
-        "description": "ELIMINA una especialidad (soft delete = no se borra completamente, solo se marca como inactiva).\n\nCambia el número al final por el ID que quieras borrar.\n\nRespuesta exitosa: 200\nNo encontrada: 404\nID inválido: 400"
-      },
-      "response": []
+        {
+          "name": "PUT - Editar una obra social",
+          "request": {
+            "method": "PUT",
+            "header": [{"key": "Content-Type", "value": "application/json"}],
+            "body": {"mode": "raw", "raw": "{\"nombre\": \"OSDE Premium\", \"porcentaje_descuento\": 25}"},
+            "url": {"raw": "http://localhost:3000/api/v1/obras-sociales/1", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "v1", "obras-sociales", "1"]},
+            "description": "MODIFICA una obra social. Requiere autenticación."
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE - Eliminar una obra social",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {"raw": "http://localhost:3000/api/v1/obras-sociales/1", "protocol": "http", "host": ["localhost"], "port": "3000", "path": ["api", "v1", "obras-sociales", "1"]},
+            "description": "ELIMINA una obra social (soft delete). Requiere autenticación."
+          },
+          "response": []
+        }
+      ]
     }
   ]
 }
