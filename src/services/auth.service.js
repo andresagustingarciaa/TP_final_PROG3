@@ -19,13 +19,10 @@ const login = async (email, contrasenia) => {
     const usuario = rows[0];
 
     // Intenta validar con bcrypt (nuevos usuarios) y SHA256 (usuarios existentes)
-    let passwordValida = false;
+    let passwordValida = await bcrypt.compare(contrasenia, usuario.contrasenia);
     
-    // Primero intenta con bcrypt (para nuevos usuarios)
-    try {
-        passwordValida = await bcrypt.compare(contrasenia, usuario.contrasenia);
-    } catch (e) {
-        // Si bcrypt falla, intenta con SHA256 (para usuarios existentes)
+    // Si bcrypt no funciona, intenta con SHA256 (usuarios existentes)
+    if (!passwordValida) {
         const contraseniaHash = hashPassword(contrasenia);
         passwordValida = contraseniaHash === usuario.contrasenia;
     }
