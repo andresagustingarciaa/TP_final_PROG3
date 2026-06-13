@@ -222,3 +222,4 @@ router.put('/:id/especialidad', validarId, validarIdEspecialidad, validar, medic
  *     responses:
  *       200:
  *         description: Lista de obras sociales obtenida*/
+module.exports = router;
