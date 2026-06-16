@@ -221,5 +221,73 @@ router.put('/:id/especialidad', validarId, validarIdEspecialidad, validar, medic
  *           type: integer
  *     responses:
  *       200:
- *         description: Lista de obras sociales obtenida*/
+ *         description: Lista de obras sociales obtenida exitosamente
+ *       404:
+ *         description: Médico no encontrado
+ */
+router.get('/:id/obras-sociales', validarId, validar, medicosController.listarObrasSociales);
+
+/**
+ * @swagger
+ * /api/v1/medicos/{id}/obras-sociales:
+ *   post:
+ *     summary: Asocia una obra social a un médico
+ *     tags: [Médicos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               id_obra_social:
+ *                 type: integer
+ *                 example: 2
+ *     responses:
+ *       201:
+ *         description: Obra social asociada exitosamente
+ *       400:
+ *         description: Datos inválidos
+ *       404:
+ *         description: Médico u obra social no encontrados
+ *       409:
+ *         description: El médico ya tiene asociada esa obra social
+ */
+router.post('/:id/obras-sociales', validarId, validarIdObraSocial, validar, medicosController.asociarObraSocial);
+
+/**
+ * @swagger
+ * /api/v1/medicos/{id}/obras-sociales/{idObraSocial}:
+ *   delete:
+ *     summary: Desasocia una obra social de un médico
+ *     tags: [Médicos]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: idObraSocial
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Obra social desasociada exitosamente
+ *       404:
+ *         description: Asociación no encontrada
+ */
+router.delete('/:id/obras-sociales/:idObraSocial', validarId, validarIdObraSocialParam, validar, medicosController.desasociarObraSocial);
+
 module.exports = router;

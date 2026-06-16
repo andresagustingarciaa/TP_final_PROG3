@@ -13,8 +13,8 @@ http:
     type: json
     data: |-
       {
-        "nombre": "OSDE",
-        "descripcion": "obra social de prueba",
+        "nombre": "OSPIN",
+        "descripcion": "obra social de prueba OSPIN",
         "porcentaje_descuento": 15,
         "es_particular": false
       }

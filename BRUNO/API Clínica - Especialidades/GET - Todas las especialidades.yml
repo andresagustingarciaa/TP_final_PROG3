@@ -6,7 +6,9 @@ info:
 http:
   method: GET
   url: http://localhost:3000/api/v1/especialidades
-  auth: inherit
+  auth:
+    type: bearer
+    token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6OCwiZW1haWwiOiJmZXJiZW5AY29ycmVvLmNvbSIsInJvbCI6MywiaWF0IjoxNzgxNDkyNTQ1LCJleHAiOjE3ODE1MjEzNDV9.oLmJLwJk3mdtz-e17dQ4VafJUl7PclcPsbncc8cDAOU
 
 settings:
   encodeUrl: true
